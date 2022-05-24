@@ -11,11 +11,6 @@ let pages = {
     "heading": "About Bundle",
     "title": "about",
     "content": "Bundle is a simple and offline coding platform focused on community and friends. Effortlessly snap blocks together to create your own code - then share your masterpiece to everyone!"
-  },
-  "workspace": {
-    "heading": "Workspace",
-    "title": "workspace",
-    "content": `<textarea id='code'></textarea> <button onclick="runbundle($('#code')[0].value)">Run!</button>`
   }
 }
 
@@ -40,38 +35,3 @@ function displayPage(title, heading, content) {
 }
 
 loadPage(location.hash);
-
-function runbundle(algorithm) {
-let commands = ["start", "end"];
-
-algorithm = algorithm.split("\n"); // .slice(1, -1)
-
-if (algorithm[0] != "start") {
-    throwErr();
-}else{
-    if (algorithm[algorithm.length-1] != "end") {
-        throwErr();
-    }else{
-        algorithm.slice(1, -1)
-        for (let i = 0;i < algorithm.length;i++) {
-            if (commands.includes(algorithm[i])) {
-
-            }else{
-                if (algorithm[i].startsWith("write ")) {
-                    message(algorithm[i].slice(6));
-                }else{
-                    throwErr();
-                }
-            }
-        }
-    }
-}
-}
-
-function throwErr() {
-    alert("bad command");
-}
-
-function message(x) {
-    alert(x);
-}

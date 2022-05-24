@@ -24,3 +24,13 @@ body {
 .content {
   padding: 10px 10px 10px 10%;
 }
+
+#code {
+  resize: none;
+  width: 80%;
+  whitespace: pre;
+  height: 30vh;
+  border: 2px solid darkgrey;
+  border-radius: 10px;
+  padding: 5px;
+}
