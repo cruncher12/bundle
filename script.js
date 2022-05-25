@@ -5,12 +5,17 @@ let pages = {
   "#": {
     "heading": "Home",
     "title": "home",
-    "content": "Oh, well this page seems a bit blank! <a href='#about'>About?</a>"
+    "content": "<div class='row'>Featured Bundles</div><div class='row'>Recent Bundles</div>Oh, well this page seems a bit blank! <a href='#about'>About?</a> <a href='workspace.html'>Workspace?</a>"
   },
   "about": {
     "heading": "About Bundle",
     "title": "about",
-    "content": "Bundle is a simple and offline coding platform focused on community and friends. Effortlessly snap blocks together to create your own code - then share your masterpiece to everyone!"
+    "content": "Bundle is a simple coding platform focused on community and friends. Effortlessly snap lines of code together to create your app and share your talent with everyone!"
+  },
+  "feedback": {
+    "heading": "Feedback",
+    "title": "feedback",
+    "content": "Bundle is a simple coding platform focused on community and friends. <hr> Thank you for using Bundle! Our app is still in developement. If you find any bugs, glitches, or have a suggestion, please go to <a href='https://github.com/lankybox02/bundle'>our github page</a>!"
   }
 }
 
