@@ -8,11 +8,12 @@
   <link href="style.css" rel="stylesheet" type="text/css" />
   <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
   <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+  <script src="templates.js"></script>
 </head>
 <body>
   <div class="navbar"><a href="index.html"><img src="logo.png" style="height:40px;" /></a></div>
   <div class="content">
-    <h2>Untitled project</h2>
+    <h2>Untitled project <a href="#">(🖉)</a></h2>
 <textarea id="code" contenteditable="" spellcheck="false">
 start
 ask what's your name?
@@ -22,35 +23,34 @@ write !
 break
 write you've got a nice name :)
 end</textarea>
-<br><button onclick="runbundle($('#code')[0].value, true);">Run!</button> - <button onclick="clearInterval(loop);this.setAttribute('disabled', '')" id="stopbutton" disabled>Stop!</button><br><br><b>Output <a href="#" onclick="clearConsole()">(clear)</a></b><br><code id="output">Your bundle's output will show up here...</code>
+<br><button onclick="runbundle($('#code')[0].value, true);">Run!</button> - <button onclick="clearInterval(loop);this.setAttribute('disabled', '');document.querySelector('#code').removeAttribute('disabled');" id="stopbutton" disabled>Stop!</button><br><br><b>Output <a href="#" onclick="clearConsole()">(clear)</a></b><br><code id="output">Your bundle's output will show up here...</code>
 <hr>
     <h2>Templates</h2>
-    <button onclick="loadtemplate1()">Guess the number game</button>
+    <button onclick="template('template2')">Randomised variable example</button>
+    <br>
+    <br>
+    <button onclick="template('template3')">Simple "loop" example</button>
+    <br>
+    <br>
+    <button onclick="template('template4')">Simple "ask" example</button>
+    <br>
+    <br>
+    <button onclick="template('template1')">Guess the number game</button>
   </div>
 
   <a href="index.html#feedback"><button class="button">💬</button></a>
   <script>
-    let template1 = "start\nrandomise 5\nask Guess the number between 1 and 5!\nif {ans}={random}\nwrite Congrats, you got it!\nif {ans}!={random}\nwrite Oof, you didn't get it.\nend";
-    function loadtemplate1() {
-      if ($("#code")[0].value == template1) {
-        $("#code").effect("shake");
-      }else{
-        $("#code").effect("highlight");
-        $("#code")[0].innerHTML = template1;
-      }
-    }
-    
     let loop = false;
     let variables = {
       "null": " "
     };
-    function runbundle(algorithm, clear) {
+    function runbundle(algorithmorigin, clear) {
     if (clear) clearConsole();
-    let commands = ["start", "end", "debug", "break", "randomise"];
+    let commands = ["start", "end", "debug", "break", "randomise", "rasterize"];
     let disableDebug = true;
     let nextif = false;
     
-    algorithm = algorithm.split("\n"); // .slice(1, -1)
+    algorithm = algorithmorigin.split("\n"); // .slice(1, -1)
     let xlength = algorithm.length;
     if (algorithm[0] != "start") {
     }else{
@@ -69,6 +69,9 @@ end</textarea>
                   }
                   if (algorithm[i] == "break") {
                     message("\n");
+                  }
+                  if (algorithm[i] == "rasterize") {
+                    variables.res = algorithmorigin;
                   }
                 }else{
                     if (algorithm[i].startsWith("write ")) {
@@ -104,7 +107,7 @@ end</textarea>
                               debug("Failed to throw variable since it doesn't exist", disableDebug);
                               debug("", disableDebug);
                             }else{
-                              message(" " + variables[algorithm[i].slice(6)]);
+                              message(variables[algorithm[i].slice(6)]);
                               debug("Threw variable", disableDebug);
                               debug("", disableDebug);
                             }
@@ -137,6 +140,7 @@ end</textarea>
                                     loop = setInterval(function() {
                                         runbundle($('#code')[0].value);
                                     }, 500);
+                                    document.querySelector("#code").setAttribute("disabled", "");
                                     document.querySelector("#stopbutton").removeAttribute("disabled");
                                   }
                                 }else{
