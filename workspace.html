@@ -9,195 +9,72 @@
   <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
   <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
   <script src="templates.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.1.1/dist/jdenticon.min.js" async
+        integrity="sha384-l0/0sn63N3mskDgRYJZA6Mogihu0VY3CusdLMiwpJ9LFPklOARUcOiWEIGGmFELx" crossorigin="anonymous">
+</script>
 </head>
 <body>
   <div class="navbar"><a href="index.html"><img src="logo.png" style="height:40px;" /></a></div>
   <div class="content">
-    <h2>Untitled project <a href="#">(🖉)</a></h2>
+    <svg data-jdenticon-value="" width="80" height="80" style="vertical-align: middle;cursor:pointer" id="jdenticon" onclick="newJdenticon();"></svg>
+    <input id="name" value="Untitled bundle" />
+    <br>
 <textarea id="code" contenteditable="" spellcheck="false">
 start
-ask what's your name?
-write hello there,
-throw ans
-write !
-break
-write you've got a nice name :)
+write ...
 end</textarea>
-<br><button onclick="runbundle($('#code')[0].value, true);">Run!</button> - <button onclick="clearInterval(loop);this.setAttribute('disabled', '');document.querySelector('#code').removeAttribute('disabled');" id="stopbutton" disabled>Stop!</button><br><br><b>Output <a href="#" onclick="clearConsole()">(clear)</a></b><br><code id="output">Your bundle's output will show up here...</code>
+<br><button onclick="runbundle($('#code')[0].value, true);">Run!</button> - <button onclick="disableLoop(this)" id="stopbutton" disabled>Stop!</button><br><br><b>Output <a href="#" onclick="clearConsole()">(clear)</a></b><br><code id="output">Your bundle's output will show up here...</code>
 <hr>
-    <h2>Templates</h2>
-    <button onclick="template('template2')">Randomised variable example</button>
-    <br>
-    <br>
-    <button onclick="template('template3')">Simple "loop" example</button>
-    <br>
-    <br>
-    <button onclick="template('template4')">Simple "ask" example</button>
-    <br>
-    <br>
-    <button onclick="template('template1')">Guess the number game</button>
+    <button onclick="share()">Share</button> - <a href="index.html#templates"><button>Templates</button></a>
   </div>
-
+  
   <a href="index.html#feedback"><button class="button">💬</button></a>
+  <script src="workspace.js"></script>
   <script>
-    let loop = false;
-    let variables = {
-      "null": " "
-    };
-    function runbundle(algorithmorigin, clear) {
-    if (clear) clearConsole();
-    let commands = ["start", "end", "debug", "break", "randomise", "rasterize"];
-    let disableDebug = true;
-    let nextif = false;
+    let cooldown = false;
+    let cooldownnum = 0;
+
     
-    algorithm = algorithmorigin.split("\n"); // .slice(1, -1)
-    let xlength = algorithm.length;
-    if (algorithm[0] != "start") {
-    }else{
-        if (algorithm[algorithm.length-1] != "end") {
-            throwErr("bad end");
+    function newJdenticon() {
+      if (cooldown) {
+        openModal("You're on cooldown!");
+        cooldownnum = 0;
+        return;
+      };
+      cooldownnum++;
+      if (cooldownnum > 4) {
+        cooldown = true;
+      }
+      setTimeout(function(){
+        cooldown = false;
+      }, 3000)
+      $("#jdenticon")[0].setAttribute("data-jdenticon-value", Math.floor(Math.random() * 20000).toString(36))
+      jdenticon.update($("#jdenticon")[0]);
+      $("#jdenticon").hide();
+      $("#jdenticon").show("fade");
+    }
+
+    newJdenticon();
+
+    function share() {
+      shared = true;
+      if (name == null || pass == null) window.location.href = "index.html#signup";
+      openModal("Please wait...");
+      postData('https://bundleapi.lankybox02.repl.co/project/new', { title:  $("#name")[0].value, code: $("#code")[0].value, description: "My cool bundle!", author: name, password: pass, jdenticon: $("#jdenticon")[0].getAttribute("data-jdenticon-value") })
+      .then(data => {
+        if (data.success) {
+          window.location.href = "view.html#" + data.id;
         }else{
-            algorithm.slice(1, -1)
-            for (let i = 0;i < xlength;i++) {
-              if (nextif == false) {
-                nextif = true;
-                continue;
-              }
-                if (commands.includes(algorithm[i])) {
-                  if (algorithm[i] == "debug") {
-                    disableDebug = false;
-                  }
-                  if (algorithm[i] == "break") {
-                    message("\n");
-                  }
-                  if (algorithm[i] == "rasterize") {
-                    variables.res = algorithmorigin;
-                  }
-                }else{
-                    if (algorithm[i].startsWith("write ")) {
-                        message(algorithm[i].slice(6));
-                          debug("Wrote", disableDebug);
-                          debug("", disableDebug);
-                    }else{
-                      if (algorithm[i].startsWith("ask ")) {
-                          variables.ans = prompt(algorithm[i].slice(4));
-                          // message("[" + (i+1).toString() + "] " + variables.ans);
-                          debug("Asked: " + algorithm[i].slice(4), disableDebug);
-                          debug("sent request to set \"ans\" as response", disableDebug);
-                          debug("ans: " + variables.ans, disableDebug);
-                          debug("", disableDebug);
-                      }else{
-                        if (algorithm[i].startsWith("def ")) {
-                            if (algorithm[i].split("=").length != 2) {
-                              debug("Failed to create variable, incorrect number of arguments!", disableDebug);
-                              debug("", disableDebug);
-                              throwErr("bad command");
-                            }else{
-                              debug("created variable", disableDebug);
-                              debug("name: " + algorithm[i].split("=")[0].slice(4), disableDebug);
-                              debug("value: " + algorithm[i].split("=")[1], disableDebug);
-                              debug("", disableDebug);
-                              variables[algorithm[i].split("&")[0].slice(4)] = algorithm[i].split("&")[1];
-                            }
-                        }else{
-                          if (algorithm[i].startsWith("throw ")) {
-                            if (variables[algorithm[i].slice(6)] == null) {
-                              throwErr("bad variable")
-                              break;
-                              debug("Failed to throw variable since it doesn't exist", disableDebug);
-                              debug("", disableDebug);
-                            }else{
-                              message(variables[algorithm[i].slice(6)]);
-                              debug("Threw variable", disableDebug);
-                              debug("", disableDebug);
-                            }
-                          }else{
-                            if (algorithm[i].startsWith("if ")) {
-                              if (algorithm[i].split("!=").length != 2) {
-                                if (algorithm[i].split("=").length != 2) {
-                                  throwErr("bad command");
-                                  debug("invalid amount of arguments!");
-                                  break;
-                                }
-                                if (replaec(algorithm[i].split("=")[0].slice(3)) != replaec(algorithm[i].split("=")[1])) {
-                                  nextif = false;
-                                }
-                              }else{
-                                if (replaec(algorithm[i].split("!=")[0].slice(3)) == replaec(algorithm[i].split("!=")[1])) {
-                                  nextif = false;
-                                }
-                              }
-                            }else{
-                              if (algorithm[i].startsWith("randomise")) {
-                                randomnum = 10;
-                                if (algorithm[i].slice(10) != '') randomnum = parseInt(algorithm[i].slice(10));
-                                variables.random = Math.ceil(Math.random() * randomnum);
-                                debug("Set randomised number to: " + variables.random, disableDebug);
-                                debug("", disableDebug);
-                              }else{
-                                if (algorithm[i] == "loop") {
-                                  if (loop == false) {
-                                    loop = setInterval(function() {
-                                        runbundle($('#code')[0].value);
-                                    }, 500);
-                                    document.querySelector("#code").setAttribute("disabled", "");
-                                    document.querySelector("#stopbutton").removeAttribute("disabled");
-                                  }
-                                }else{
-                                debug("Failed to run command; it does not exist", disableDebug);
-                                debug("at: " + i.toString(), disableDebug);
-                                debug("trying: " + algorithm[i], disableDebug);
-                                debug("", disableDebug);
-                                throwErr("bad command");
-                                break;
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                }
-            }
-          if (algorithm.length == 0) {
-            throwErr("bad commands list");
+          if (data.success == false) {
+            openModal("Something went horribly wrong while sharing your project.")
+          }else{
+            openModal(data.error);
           }
         }
-    }
-    }
-    
-    function throwErr(x) {
-      $("#output")[0].innerText = $("#output")[0].innerText + "\n" + x;
-    }
-    
-    function message(x) {
-      $("#output")[0].innerText = $("#output")[0].innerText + x;
-    }
-    
-    function debug(x, y) {
-      if (y == true) return;
-      $("#output")[0].innerText = $("#output")[0].innerText + "\n[debug] " + x;
-    }
-
-    function replaec(str) {
-        for (let w = 0;w < Object.keys(variables).length + 1;w++) {
-            if (w == Object.keys(variables).length) {
-                str = str.replaceAll(`{${Object.keys(variables)[w]}}`, variables[Object.keys(variables)[w]]);
-                return str;
-            }else{
-                str = str.replaceAll(`{${Object.keys(variables)[w]}}`, variables[Object.keys(variables)[w]]);
-            }
-        }
-    }
-
-    window.addEventListener('beforeunload', (w) => {
-      w.preventDefault();
-      w.returnValue = '';
-    });
-
-    function clearConsole() {
-      $("#output")[0].innerText = "";
+      });
     }
   </script>
+  <script src="navbar.js"></script>
+  <script src="modal.js"></script>
 </body>
 </html>

@@ -2,6 +2,7 @@ let templates = {
 "template1": `start
 randomise 5
 ask Guess the number between 1 and 5!
+break
 if {ans}={random}
 write Congrats, you got it!
 if {ans}!={random}
@@ -20,6 +21,7 @@ loop
 end`,
 "template4": `start
 ask what's your name?
+break
 write hello there, 
 throw ans
 write !
