@@ -14,7 +14,7 @@
 </script>
 </head>
 <body>
-  <div class="navbar"><a href="index.html"><img src="logo.png" style="height:40px;" /></a></div>
+  <div class="navbar"><a href="./"><img src="logo.png" style="height:40px;" /></a></div>
   <div class="content">
     <h1 style="margin-bottom:0"><span id="viewname">Name</span> <span id="nameedit"></span> <span id="delete"></span></h1>
     <span>By <b id="author">Author</b></span>
@@ -29,7 +29,7 @@
         .then(data => loadCode(data))
     
     function loadCode(data) {
-      if (data.success == false) window.location.href = "index.html#404";
+      if (data.success == false) window.location.href = "./#404";
       
       x = "";
       y = "";

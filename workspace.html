@@ -14,7 +14,7 @@
 </script>
 </head>
 <body>
-  <div class="navbar"><a href="index.html"><img src="logo.png" style="height:40px;" /></a></div>
+  <div class="navbar"><a href="./"><img src="logo.png" style="height:40px;" /></a></div>
   <div class="content">
     <svg data-jdenticon-value="" width="80" height="80" style="vertical-align: middle;cursor:pointer" id="jdenticon" onclick="newJdenticon();"></svg>
     <input id="name" value="Untitled bundle" />
@@ -25,10 +25,10 @@ write ...
 end</textarea>
 <br><button onclick="runbundle($('#code')[0].value, true);">Run!</button> - <button onclick="disableLoop(this)" id="stopbutton" disabled>Stop!</button><br><br><b>Output <a href="#" onclick="clearConsole()">(clear)</a></b><br><code id="output">Your bundle's output will show up here...</code>
 <hr>
-    <button onclick="share()">Share</button> - <a href="index.html#templates"><button>Templates</button></a>
+    <button onclick="share()">Share</button> - <a href="./#templates"><button>Templates</button></a>
   </div>
   
-  <a href="index.html#feedback"><button class="button">💬</button></a>
+  <a href="./#feedback"><button class="button">💬</button></a>
   <script src="workspace.js"></script>
   <script>
     let cooldown = false;
@@ -58,7 +58,7 @@ end</textarea>
 
     function share() {
       shared = true;
-      if (name == null || pass == null) window.location.href = "index.html#signup";
+      if (name == null || pass == null) window.location.href = "./#signup";
       openModal("Please wait...");
       postData('https://bundleapi.lankybox02.repl.co/project/new', { title:  $("#name")[0].value, code: $("#code")[0].value, description: "My cool bundle!", author: name, password: pass, jdenticon: $("#jdenticon")[0].getAttribute("data-jdenticon-value") })
       .then(data => {
